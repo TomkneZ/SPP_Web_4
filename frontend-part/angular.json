@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "projects": {
+    "sppwebapp": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/frontend-part",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "styles": [
+              "src/styles.scss"
+            ],
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.json",
+            "aot": true
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "sppwebapp:build"
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "sppwebapp"
+}
