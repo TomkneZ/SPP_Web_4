@@ -1,10 +1,9 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
-import { CoursesService } from '../courses.service'
 import { Course } from '../../models/course';
 import { MatTableDataSource } from '@angular/material/table';
-import { AuthService } from '../../auth/auth.service';
+import { WebSocketService } from '../../websocket.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -12,7 +11,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
     templateUrl: './courses.component.html',
     styleUrls: ['./courses.component.scss'],
     providers: [
-        CoursesService
+        WebSocketService
     ]
 })
 
@@ -21,9 +20,8 @@ export class AddCourseComponent implements OnInit {
     public submitted = false;
     public courseAdded: Boolean = false;
 
-    public constructor(
-        private coursesService: CoursesService,
-        private authService: AuthService,
+    public constructor(     
+        private webSocketService: WebSocketService,
         private formBuilder: FormBuilder) { }
 
     public ngOnInit(): void {
@@ -36,7 +34,7 @@ export class AddCourseComponent implements OnInit {
     get f() { return this.addCourseForm.controls; }
 
     public onLogout(): void {
-        this.authService.logout();
+        this.webSocketService.logout();
     }
 
     public onSubmit(): void {
@@ -48,11 +46,6 @@ export class AddCourseComponent implements OnInit {
 
         this.courseAdded = true;
 
-        this.coursesService.addCourse(this.f.name.value, this.f.uniqueCode.value)
-            .subscribe(
-                (error) => {
-                    console.log(error);
-                }               
-            );
+        this.webSocketService.addCourse(this.f.name.value, this.f.uniqueCode.value);          
     }
 }

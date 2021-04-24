@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../auth.service';
+import { WebSocketService } from '../../websocket.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -9,20 +9,23 @@ import { Subscription } from 'rxjs';
     templateUrl: './register.component.html',
     styleUrls: ['./register.component.scss'],
     providers: [
-        AuthService
+        WebSocketService
     ]
 })
 
 export class RegisterComponent implements OnInit {
     public registerForm: FormGroup;
     public submitted = false;
-    private subscription: Subscription = new Subscription();
-    public  registerFailed = false;
+    private subscription: Subscription = new Subscription();  
 
     public constructor(
         private formBuilder: FormBuilder,
         private router: Router,
-        private authService: AuthService) { }
+        private webSocketService: WebSocketService) {
+        if (this.webSocketService.currentUserToken) {
+            this.router.navigate(['professors']);
+        }    
+    }
 
     public ngOnInit(): void {
         this.registerForm = this.formBuilder.group({
@@ -45,6 +48,6 @@ export class RegisterComponent implements OnInit {
             return;
         }
 
-        this.authService.register(this.f.login.value, this.f.email.value, this.f.password.value);        
+        this.webSocketService.register(this.f.login.value, this.f.email.value, this.f.password.value);        
     }
 }

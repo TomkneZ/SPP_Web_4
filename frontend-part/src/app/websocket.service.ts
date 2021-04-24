@@ -2,19 +2,17 @@ import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { DataService } from './data.service';
 import { Router } from '@angular/router';
-import { Message } from '../models/message';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Person } from '../models/person';
+import { Message } from './models/message';
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {    
+export class WebSocketService {
     private currentToken: string;
     private socket = new WebSocket("ws://localhost:9000");
 
     public constructor(
         private cookieService: CookieService,
         private router: Router,
-        private dataservice: DataService) {     
+        private dataservice: DataService) {
         this.currentToken = cookieService.get('token');
 
         this.socket.onmessage = function (event) {
@@ -24,6 +22,7 @@ export class AuthService {
                 case 'login': {
                     if (res.isDone) {
                         cookieService.set('token', res.token);
+                        cookieService.set('role', res.role);
                         router.navigate(['professors']);
                     }
                     break;
@@ -32,6 +31,7 @@ export class AuthService {
                 case 'register': {
                     if (res.isDone) {
                         cookieService.set('token', res.token);
+                        cookieService.set('role', res.role);
                         router.navigate(['professors']);
                     }
                     break;
@@ -46,7 +46,7 @@ export class AuthService {
                 }
 
                 case 'getactiveprofessors': {
-                    dataservice.setActiveProfessorsValue(res.professors);                 
+                    dataservice.setActiveProfessorsValue(res.professors);
                     break;
                 }
 
@@ -65,8 +65,8 @@ export class AuthService {
                     break;
                 }
             }
-        }        
-    }       
+        }
+    }
 
     public get currentUserToken(): Boolean {
         if (this.currentToken) {
@@ -84,7 +84,7 @@ export class AuthService {
             });
         } else {
             this.socket.send(data);
-        }       
+        }
     }
 
     public login(email: string, password: string): void {
@@ -100,7 +100,7 @@ export class AuthService {
         this.sendRequest(data);
     }
 
-    public logout(): void {       
+    public logout(): void {
         const message: Message = {
             type: 'logout',
             body: {
@@ -117,8 +117,8 @@ export class AuthService {
             body: null
         };
         const data = JSON.stringify(message);
-        this.sendRequest(data);   
-    }   
+        this.sendRequest(data);
+    }
 
     public getActiveStudents(): void {
         const message: Message = {
@@ -127,7 +127,7 @@ export class AuthService {
         };
         const data = JSON.stringify(message);
         this.sendRequest(data);
-    }  
+    }
 
     public getStudentCourses(student: string): void {
         const message: Message = {
@@ -137,7 +137,7 @@ export class AuthService {
             }
         };
         const data = JSON.stringify(message);
-        this.sendRequest(data);  
+        this.sendRequest(data);
     }
 
     public getNotStudentCourses(student: string): void {
@@ -151,7 +151,27 @@ export class AuthService {
         this.sendRequest(data);
     }
 
-    public addCourse(): void {
+    public addCourse(name: string, unique_code: number): void {
+        const message: Message = {
+            type: 'addcourse',
+            body: {
+                name: name,
+                unique_code: unique_code
+            }
+        };
+        const data = JSON.stringify(message);
+        this.sendRequest(data);
+    }
 
+    public addStudentToCourse(student: string, course: string): void {
+        const message: Message = {
+            type: 'addstudenttocourse',
+            body: {
+                student: student,
+                course: course
+            }
+        };
+        const data = JSON.stringify(message);
+        this.sendRequest(data);
     }
 }

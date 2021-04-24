@@ -44,6 +44,7 @@ wsServer.on('connection', async function (ws) {
                     const user = new User(data.body);
                     await user.save();
                     res.token = await user.generateAuthToken();
+                    res.role = user.role;
                     res.isDone = true;
                     ws.send(JSON.stringify(res));
                 } catch (error) {
@@ -63,6 +64,7 @@ wsServer.on('connection', async function (ws) {
                         ws.send(JSON.stringify(res));
                     }
                     res.token = await user.generateAuthToken();
+                    res.role = user.role;
                     res.isDone = true;
                     ws.send(JSON.stringify(res));
                 } catch (error) {

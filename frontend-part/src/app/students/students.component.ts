@@ -3,15 +3,15 @@ import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { Person } from '../models/person';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../auth/auth.service';
-import { DataService } from '../auth/data.service';
+import { WebSocketService } from '../websocket.service';
+import { DataService } from '../data.service';
 
 @Component({
     selector: 'students-app',
     templateUrl: './students.component.html',
     styleUrls: ['./students.component.scss'],
-    providers: [  
-        AuthService
+    providers: [
+        WebSocketService
     ]
 })
 
@@ -26,8 +26,8 @@ export class StudentsComponent implements OnInit {
 
     public constructor(
         private dataService: DataService,
-        private authService: AuthService) {
-        this.authService.getActiveStudents();
+        private webSocketService: WebSocketService) {
+        this.webSocketService.getActiveStudents();
     }
 
     public ngOnInit(): void {
@@ -47,6 +47,6 @@ export class StudentsComponent implements OnInit {
     }
 
     public onLogout(): void {
-        this.authService.logout();
+        this.webSocketService.logout();
     }
 }

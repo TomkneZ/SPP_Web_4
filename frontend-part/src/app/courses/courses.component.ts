@@ -3,15 +3,15 @@ import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
 import { Course } from '../models/course';
 import { MatTableDataSource } from '@angular/material/table';
-import { AuthService } from '../auth/auth.service';
-import { DataService } from '../auth/data.service';
+import { WebSocketService } from '../websocket.service';
+import { DataService } from '../data.service';
 
 @Component({
     selector: 'courses-app',
     templateUrl: './courses.component.html',
     styleUrls: ['./courses.component.scss'],
     providers: [
-        AuthService
+        WebSocketService
     ]
 })
 
@@ -29,8 +29,8 @@ export class CoursesComponent implements OnInit {
 
     public constructor(
         private dataService: DataService,
-        private authService: AuthService) {
-        this.authService.getNotStudentCourses(this.studentId);
+        private websocketService: WebSocketService) {
+        this.websocketService.getNotStudentCourses(this.studentId);
     }
 
     public ngOnInit(): void {
@@ -56,19 +56,12 @@ export class CoursesComponent implements OnInit {
 
     public onRowClicked(row): void {
         const courseId = row._id;
-        this.subscription.add(
-            this.coursesService.addStudentToCourse(this.studentId, courseId)
-                .subscribe(
-                    (data: Boolean) => {
-                        this.displayAvailable = !data,
-                            this.authService.getStudentCourses(this.studentId);
-                    }
-                )
-        );   
-        
+        this.websocketService.addStudentToCourse(this.studentId, courseId);
+        this.websocketService.getStudentCourses(this.studentId);
+        this.displayAvailable = false;      
     }
 
     public onLogout(): void {
-        this.authService.logout();
+        this.websocketService.logout();
     }
 }

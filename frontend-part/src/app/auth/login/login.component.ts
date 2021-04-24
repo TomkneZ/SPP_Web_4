@@ -1,8 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../auth.service';
-import { Subscription } from 'rxjs';
+import { WebSocketService } from '../../websocket.service';
 import { CookieService } from 'ngx-cookie-service';
 
 @Component({
@@ -10,22 +9,19 @@ import { CookieService } from 'ngx-cookie-service';
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss'],
     providers: [
-        AuthService
+        WebSocketService
     ]   
 })
 
 export class LoginComponent implements OnInit {
     public loginForm: FormGroup;
     public submitted = false;
-    private subscription: Subscription = new Subscription();
-    public authFailed = false;  
 
     public constructor(
         private formBuilder: FormBuilder,
-        private authService: AuthService,
-        private cookieService: CookieService,
+        private webSocketService: WebSocketService,
         private router: Router) {
-        if (this.authService.currentUserToken) {
+        if (this.webSocketService.currentUserToken) {
             this.router.navigate(['professors']);
         }       
     }
@@ -35,11 +31,7 @@ export class LoginComponent implements OnInit {
             email: ['', Validators.required, Validators.email],
             password: ['', Validators.required]
         });
-    }
-
-    public ngOnDestroy(): void {
-        this.subscription.unsubscribe();
-    }
+    }   
 
     get f() { return this.loginForm.controls; }
 
@@ -50,6 +42,6 @@ export class LoginComponent implements OnInit {
             return;
         }
 
-        this.authService.login(this.f.email.value, this.f.password.value);       
+        this.webSocketService.login(this.f.email.value, this.f.password.value);       
     }
 }

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Person } from '../models/person';
-import { Course } from '../models/course';
+import { Person } from './models/person';
+import { Course } from './models/course';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({ providedIn: 'root' })
 
@@ -14,20 +15,29 @@ export class DataService {
 
     private addedCourses: BehaviorSubject<Course[]>;
 
-    constructor() {
+    public constructor(private cookieService: CookieService) {
         this.activeProfessors = new BehaviorSubject<Person[]>(null);
         this.activeStudents = new BehaviorSubject<Person[]>(null);
         this.availableCourses = new BehaviorSubject<Course[]>(null);
         this.addedCourses = new BehaviorSubject<Course[]>(null);
     }
 
-    public setActiveProfessorsValue(newValue): void{
+    public get currentUserToken(): Boolean {
+        if (this.cookieService.get('token')) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public setActiveProfessorsValue(newValue): void {
         this.activeProfessors.next(newValue);
     }
 
     public getActiveProfessorsValue(): Observable<Person[]> {
         return this.activeProfessors.asObservable();
-    } 
+    }
 
     public setActiveStudentsValue(newValue): void {
         this.activeStudents.next(newValue);
@@ -50,6 +60,6 @@ export class DataService {
     }
 
     public getAddedCourses(): Observable<Course[]> {
-        this.addedCourses.asObservable;
+        return this.addedCourses.asObservable();
     }
 }
