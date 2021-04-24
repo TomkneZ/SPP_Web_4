@@ -1,8 +1,4 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
-import { Subscription } from 'rxjs';
-import { Course } from '../../models/course';
-import { MatTableDataSource } from '@angular/material/table';
 import { WebSocketService } from '../../websocket.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 

@@ -2,7 +2,7 @@
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WebSocketService } from '../../websocket.service';
-import { CookieService } from 'ngx-cookie-service';
+import { DataService } from '../../data.service';
 
 @Component({
     selector: 'login-app',
@@ -20,8 +20,9 @@ export class LoginComponent implements OnInit {
     public constructor(
         private formBuilder: FormBuilder,
         private webSocketService: WebSocketService,
+        private dataService: DataService,
         private router: Router) {
-        if (this.webSocketService.currentUserToken) {
+        if (this.dataService.currentUserToken) {
             this.router.navigate(['professors']);
         }       
     }

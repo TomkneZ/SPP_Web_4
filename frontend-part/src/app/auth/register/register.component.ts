@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WebSocketService } from '../../websocket.service';
+import { DataService } from '../../data.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -21,8 +22,9 @@ export class RegisterComponent implements OnInit {
     public constructor(
         private formBuilder: FormBuilder,
         private router: Router,
+        private dataService: DataService,
         private webSocketService: WebSocketService) {
-        if (this.webSocketService.currentUserToken) {
+        if (this.dataService.currentUserToken) {
             this.router.navigate(['professors']);
         }    
     }

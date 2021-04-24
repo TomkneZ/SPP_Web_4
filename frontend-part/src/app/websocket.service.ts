@@ -66,16 +66,7 @@ export class WebSocketService {
                 }
             }
         }
-    }
-
-    public get currentUserToken(): Boolean {
-        if (this.currentToken) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
+    }  
 
     private sendRequest(data: string): void {
         if (!this.socket.readyState) {
